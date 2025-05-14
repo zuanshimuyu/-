@@ -8,18 +8,19 @@
     <style>
         body {
             font-family: 'Microsoft YaHei', sans-serif;
-            max-width: 800px;
+            max-width: 1000px;
             margin: 20px auto;
             background: #fff;
+            padding: 0 15px;
         }
         .header {
             text-align: center;
             margin-bottom: 20px;
         }
         .header h1 {
-            font-size: 24px;
+            font-size: 30px;
             color: #333;
-            margin: 0;
+            margin: 0.5;
         }
         .dimension-grid {
             display: grid;
@@ -52,11 +53,18 @@
             text-align: center;
             border: 1px solid #ddd;
         }
+        input[type="color"] {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
         .chart-container {
             position: relative;
             margin: 20px auto;
-            width: 600px;
-            height: 600px;
+            width: 650px;
+            height: 550px;
         }
         .button-group {
             display: flex;
@@ -92,41 +100,49 @@
     <div class="dimension-grid">
         <div class="dimension-item">
             <label>健康</label>
+            <input type="color" value="#FF6384" data-index="0">
             <input type="range" min="1" max="10" value="1" data-index="0">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
             <label>事业</label>
+            <input type="color" value="#36A2EB" data-index="1">
             <input type="range" min="1" max="10" value="1" data-index="1">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
             <label>成长</label>
+            <input type="color" value="#FFCE56" data-index="2">
             <input type="range" min="1" max="10" value="1" data-index="2">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
             <label>爱情</label>
+            <input type="color" value="#4BC0C0" data-index="3">
             <input type="range" min="1" max="10" value="1" data-index="3">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
             <label>财富</label>
+            <input type="color" value="#9966FF" data-index="4">
             <input type="range" min="1" max="10" value="1" data-index="4">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
             <label>家庭/亲情</label>
+            <input type="color" value="#FF9F40" data-index="5">
             <input type="range" min="1" max="10" value="1" data-index="5">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
             <label>休闲/娱乐</label>
+            <input type="color" value="#8AC24A" data-index="6">
             <input type="range" min="1" max="10" value="1" data-index="6">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
             <label>友情</label>
+            <input type="color" value="#EA80FC" data-index="7">
             <input type="range" min="1" max="10" value="1" data-index="7">
             <input type="number" min="1" max="10" value="1">
         </div>
@@ -147,74 +163,202 @@
     <script>
         // 初始化数据（全部设为1）
         const initialData = [1,1,1,1,1,1,1,1];
+        const initialColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#8AC24A', '#EA80FC'];
         
         // 图表初始化
         const ctx = document.getElementById('radarChart').getContext('2d');
         const chart = new Chart(ctx, {
             type: 'radar',
             data: {
-                labels: ['健康', '事业', '成长', '爱情', '财富', '家庭/亲情', '休闲/娱乐', '友情'],
+                labels: ['', '', '', '', '', '', '', ''], // 显示所有标签
                 datasets: [{
-                    label: '满意度',
+                    label: '',
                     data: [...initialData],
-                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
-                    borderColor: '#ff6384',
+                    backgroundColor: 'rgba(255, 255, 255, 0)',
+                    borderColor: 'rgba(0,0,0,0.1)',
                     pointBackgroundColor: '#fff',
-                    borderWidth: 2,
-                    pointRadius: 4
+                    borderWidth: 0,
+                    pointRadius: 0
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     r: {
-                        beginAtZero: false,
-                        min: 1,
+                        beginAtZero: true,
+                        min: 0,
                         max: 10,
                         ticks: {
                             stepSize: 1,
                             color: '#666',
                             z: 10,
                             callback: function(value) {
-                                return value; // 显示所有刻度值
+                                return value;
                             }
                         },
                         angleLines: {
-                            color: 'rgba(0,0,0,0.3)',
+                            color: 'rgba(0,0,0,0.2)',
                             lineWidth: 1
                         },
                         grid: {
-                            color: 'rgba(0,0,0,0.1)',
-                            circular: true
+                            circular: true,
+                            color: function(context) {
+                                if (context.index === 0) {
+                                    return 'rgba(0,0,0,0)';
+                                }
+                                return 'rgba(0,0,0,0.1)';
+                            },
+                            lineWidth: function(context) {
+                                if (context.index === 0) {
+                                    return 0;
+                                }
+                                return 1;
+                            }
                         },
                         pointLabels: {
+                            display: true, // 显示默认的维度标签
                             font: {
-                                size: 14
+                                size: 12
                             },
-                            padding: 20
+                            color: '#999'
                         }
                     }
                 },
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                },
+                animation: {
+                    onComplete: function() {
+                        drawSectorBackgrounds();
+                        drawCustomLabels();
+                    }
                 }
             }
         });
 
+        // 绘制扇形背景
+        function drawSectorBackgrounds() {
+            const chartArea = chart.chartArea;
+            const centerX = (chartArea.left + chartArea.right) / 2;
+            const centerY = (chartArea.top + chartArea.bottom) / 2;
+            const radius = Math.min(chartArea.right - chartArea.left, chartArea.bottom - chartArea.top) / 2 * 0.9; // 缩小半径
+            
+            const ctx = chart.ctx;
+            const angleStep = (2 * Math.PI) / 8;
+            
+            // 清除之前的绘制
+            ctx.save();
+            ctx.clearRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+            chart.draw();
+            
+            // 绘制扇形背景
+            for (let i = 0; i < 8; i++) {
+                const startAngle = i * angleStep - Math.PI / 2;
+                const endAngle = (i + 1) * angleStep - Math.PI / 2;
+                
+                // 获取当前维度的颜色
+                const colorInput = document.querySelector(`input[type="color"][data-index="${i}"]`);
+                const color = colorInput ? colorInput.value : initialColors[i];
+                
+                // 获取当前维度的值
+                const value = chart.data.datasets[0].data[i];
+                const scaledRadius = (value / 10) * radius;
+                
+                // 绘制扇形
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, scaledRadius, startAngle, endAngle);
+                ctx.closePath();
+                
+                // 填充扇形
+                ctx.fillStyle = color + '80'; // 添加透明度
+                ctx.fill();
+                
+                // 绘制扇形边框
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+
+        // 绘制自定义标签（位于雷达图外围）
+function drawCustomLabels() {
+    const chartArea = chart.chartArea;
+    const centerX = (chartArea.left + chartArea.right) / 2;
+    const centerY = (chartArea.top + chartArea.bottom) / 2;
+    // 调整半径计算，确保标签不会超出画布
+    const radius = Math.min(chartArea.right - chartArea.left, chartArea.bottom - chartArea.top) / 2 * 0.85; // 留出更多空间给标签
+    const labelRadius = radius * 1.2; // 标签位置
+    
+    const ctx = chart.ctx;
+    const angleStep = (2 * Math.PI) / 8;
+    const labels = ['健康', '事业', '成长', '爱情', '财富', '家庭/亲情', '休闲/娱乐', '友情'];
+    
+    ctx.save();
+    ctx.font = '14px Microsoft YaHei';
+    ctx.fillStyle = '#333';
+    
+    for (let i = 0; i < 8; i++) {
+        const angle = i * angleStep - Math.PI / 2 + angleStep / 2; // 将标签放在每个轴的末端
+        const x = centerX + Math.cos(angle) * labelRadius;
+        const y = centerY + Math.sin(angle) * labelRadius;
+        
+        // 确保标签在画布内
+        const padding = 10;
+        let finalX = x;
+        let finalY = y;
+        let textAlign = 'center';
+        let textBaseline = 'middle';
+        
+        if (x < chartArea.left + padding) {
+            finalX = chartArea.left + padding;
+            textAlign = 'right';
+        } else if (x > chartArea.right - padding) {
+            finalX = chartArea.right - padding;
+            textAlign = 'left';
+        }
+        
+        if (y < chartArea.top + padding) {
+            finalY = chartArea.top + padding;
+            textBaseline = 'bottom';
+        } else if (y > chartArea.bottom - padding) {
+            finalY = chartArea.bottom - padding;
+            textBaseline = 'top';
+        }
+        
+        ctx.textAlign = textAlign;
+        ctx.textBaseline = textBaseline;
+        ctx.fillText(labels[i], finalX, finalY);
+    }
+    
+    ctx.restore();
+}
+
         // 双向数据绑定
-        document.querySelectorAll('input[type="range"], input[type="number"]').forEach(input => {
+        document.querySelectorAll('input[type="range"], input[type="number"], input[type="color"]').forEach(input => {
             input.addEventListener('input', function() {
-                const index = this.parentElement.querySelector('[data-index]').dataset.index;
-                const value = Math.min(10, Math.max(1, this.value));
+                const index = this.closest('.dimension-item').querySelector('[data-index]').dataset.index;
                 
-                // 同步输入控件
-                const sibling = this.type === 'range' ? 
-                    this.nextElementSibling : 
-                    this.previousElementSibling;
-                sibling.value = value;
+                if (this.type === 'range' || this.type === 'number') {
+                    const value = Math.min(10, Math.max(0, this.value));
+                    
+                    // 同步输入控件
+                    const sibling = this.type === 'range' ? 
+                        this.nextElementSibling : 
+                        this.previousElementSibling;
+                    sibling.value = value;
+                    
+                    // 更新图表
+                    chart.data.datasets[0].data[index] = value;
+                }
                 
-                // 更新图表
-                chart.data.datasets[0].data[index] = value;
-                chart.update();
+                // 重绘扇形背景和标签
+                drawSectorBackgrounds();
+                drawCustomLabels();
             });
         });
 
@@ -238,16 +382,27 @@
             document.querySelectorAll('.dimension-item').forEach((item, index) => {
                 const rangeInput = item.querySelector('input[type="range"]');
                 const numberInput = item.querySelector('input[type="number"]');
+                const colorInput = item.querySelector('input[type="color"]');
                 const defaultValue = initialData[index];
                 
                 rangeInput.value = defaultValue;
                 numberInput.value = defaultValue;
+                if (colorInput) {
+                    colorInput.value = initialColors[index];
+                }
             });
 
             // 更新图表
             chart.data.datasets[0].data = [...initialData];
-            chart.update();
+            drawSectorBackgrounds();
+            drawCustomLabels();
         });
+
+        // 初始绘制
+        setTimeout(() => {
+            drawSectorBackgrounds();
+            drawCustomLabels();
+        }, 500);
     </script>
 </body>
 </html>
