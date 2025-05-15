@@ -38,6 +38,13 @@
             justify-content: space-between;
             gap: 10px;
         }
+        .dimension-item input[type="text"] {
+            width: 80px;
+            padding: 3px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
         .dimension-item label {
             width: 120px;
             font-size: 14px;
@@ -99,49 +106,49 @@
     
     <div class="dimension-grid">
         <div class="dimension-item">
-            <label>健康</label>
+            <input type="text" value="健康" data-index="0">
             <input type="color" value="#FF6384" data-index="0">
             <input type="range" min="1" max="10" value="1" data-index="0">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
-            <label>事业</label>
+            <input type="text" value="事业" data-index="1">
             <input type="color" value="#36A2EB" data-index="1">
             <input type="range" min="1" max="10" value="1" data-index="1">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
-            <label>成长</label>
+            <input type="text" value="成长" data-index="2">
             <input type="color" value="#FFCE56" data-index="2">
             <input type="range" min="1" max="10" value="1" data-index="2">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
-            <label>爱情</label>
+            <input type="text" value="爱情" data-index="3">
             <input type="color" value="#4BC0C0" data-index="3">
             <input type="range" min="1" max="10" value="1" data-index="3">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
-            <label>财富</label>
+            <input type="text" value="财富" data-index="4">
             <input type="color" value="#9966FF" data-index="4">
             <input type="range" min="1" max="10" value="1" data-index="4">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
-            <label>家庭/亲情</label>
+            <input type="text" value="家庭/亲情" data-index="5">
             <input type="color" value="#FF9F40" data-index="5">
             <input type="range" min="1" max="10" value="1" data-index="5">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
-            <label>休闲/娱乐</label>
+            <input type="text" value="休闲/娱乐" data-index="6">
             <input type="color" value="#8AC24A" data-index="6">
             <input type="range" min="1" max="10" value="1" data-index="6">
             <input type="number" min="1" max="10" value="1">
         </div>
         <div class="dimension-item">
-            <label>友情</label>
+            <input type="text" value="友情" data-index="7">
             <input type="color" value="#EA80FC" data-index="7">
             <input type="range" min="1" max="10" value="1" data-index="7">
             <input type="number" min="1" max="10" value="1">
@@ -164,6 +171,7 @@
         // 初始化数据（全部设为1）
         const initialData = [1,1,1,1,1,1,1,1];
         const initialColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#8AC24A', '#EA80FC'];
+        const initialLabels = ['健康', '事业', '成长', '爱情', '财富', '家庭/亲情', '休闲/娱乐', '友情'];
         
         // 图表初始化
         const ctx = document.getElementById('radarChart').getContext('2d');
@@ -286,60 +294,61 @@
         }
 
         // 绘制自定义标签（位于雷达图外围）
-function drawCustomLabels() {
-    const chartArea = chart.chartArea;
-    const centerX = (chartArea.left + chartArea.right) / 2;
-    const centerY = (chartArea.top + chartArea.bottom) / 2;
-    // 调整半径计算，确保标签不会超出画布
-    const radius = Math.min(chartArea.right - chartArea.left, chartArea.bottom - chartArea.top) / 2 * 0.85; // 留出更多空间给标签
-    const labelRadius = radius * 1.2; // 标签位置
-    
-    const ctx = chart.ctx;
-    const angleStep = (2 * Math.PI) / 8;
-    const labels = ['健康', '事业', '成长', '爱情', '财富', '家庭/亲情', '休闲/娱乐', '友情'];
-    
-    ctx.save();
-    ctx.font = '14px Microsoft YaHei';
-    ctx.fillStyle = '#333';
-    
-    for (let i = 0; i < 8; i++) {
-        const angle = i * angleStep - Math.PI / 2 + angleStep / 2; // 将标签放在每个轴的末端
-        const x = centerX + Math.cos(angle) * labelRadius;
-        const y = centerY + Math.sin(angle) * labelRadius;
-        
-        // 确保标签在画布内
-        const padding = 10;
-        let finalX = x;
-        let finalY = y;
-        let textAlign = 'center';
-        let textBaseline = 'middle';
-        
-        if (x < chartArea.left + padding) {
-            finalX = chartArea.left + padding;
-            textAlign = 'right';
-        } else if (x > chartArea.right - padding) {
-            finalX = chartArea.right - padding;
-            textAlign = 'left';
+        function drawCustomLabels() {
+            const chartArea = chart.chartArea;
+            const centerX = (chartArea.left + chartArea.right) / 2;
+            const centerY = (chartArea.top + chartArea.bottom) / 2;
+            // 调整半径计算，确保标签不会超出画布
+            const radius = Math.min(chartArea.right - chartArea.left, chartArea.bottom - chartArea.top) / 2 * 0.85; // 留出更多空间给标签
+            const labelRadius = radius * 1.2; // 标签位置
+            
+            const ctx = chart.ctx;
+            const angleStep = (2 * Math.PI) / 8;
+            const labelInputs = document.querySelectorAll('.dimension-item input[type="text"]');
+            const labels = Array.from(labelInputs).map(input => input.value);
+            
+            ctx.save();
+            ctx.font = '14px Microsoft YaHei';
+            ctx.fillStyle = '#333';
+            
+            for (let i = 0; i < 8; i++) {
+                const angle = i * angleStep - Math.PI / 2 + angleStep / 2; // 将标签放在每个轴的末端
+                const x = centerX + Math.cos(angle) * labelRadius;
+                const y = centerY + Math.sin(angle) * labelRadius;
+                
+                // 确保标签在画布内
+                const padding = 10;
+                let finalX = x;
+                let finalY = y;
+                let textAlign = 'center';
+                let textBaseline = 'middle';
+                
+                if (x < chartArea.left + padding) {
+                    finalX = chartArea.left + padding;
+                    textAlign = 'right';
+                } else if (x > chartArea.right - padding) {
+                    finalX = chartArea.right - padding;
+                    textAlign = 'left';
+                }
+                
+                if (y < chartArea.top + padding) {
+                    finalY = chartArea.top + padding;
+                    textBaseline = 'bottom';
+                } else if (y > chartArea.bottom - padding) {
+                    finalY = chartArea.bottom - padding;
+                    textBaseline = 'top';
+                }
+                
+                ctx.textAlign = textAlign;
+                ctx.textBaseline = textBaseline;
+                ctx.fillText(labels[i], finalX, finalY);
+            }
+            
+            ctx.restore();
         }
-        
-        if (y < chartArea.top + padding) {
-            finalY = chartArea.top + padding;
-            textBaseline = 'bottom';
-        } else if (y > chartArea.bottom - padding) {
-            finalY = chartArea.bottom - padding;
-            textBaseline = 'top';
-        }
-        
-        ctx.textAlign = textAlign;
-        ctx.textBaseline = textBaseline;
-        ctx.fillText(labels[i], finalX, finalY);
-    }
-    
-    ctx.restore();
-}
 
         // 双向数据绑定
-        document.querySelectorAll('input[type="range"], input[type="number"], input[type="color"]').forEach(input => {
+        document.querySelectorAll('input[type="range"], input[type="number"], input[type="color"], input[type="text"]').forEach(input => {
             input.addEventListener('input', function() {
                 const index = this.closest('.dimension-item').querySelector('[data-index]').dataset.index;
                 
@@ -350,7 +359,9 @@ function drawCustomLabels() {
                     const sibling = this.type === 'range' ? 
                         this.nextElementSibling : 
                         this.previousElementSibling;
-                    sibling.value = value;
+                    if (sibling && (sibling.type === 'range' || sibling.type === 'number')) {
+                        sibling.value = value;
+                    }
                     
                     // 更新图表
                     chart.data.datasets[0].data[index] = value;
@@ -383,12 +394,16 @@ function drawCustomLabels() {
                 const rangeInput = item.querySelector('input[type="range"]');
                 const numberInput = item.querySelector('input[type="number"]');
                 const colorInput = item.querySelector('input[type="color"]');
+                const textInput = item.querySelector('input[type="text"]');
                 const defaultValue = initialData[index];
                 
                 rangeInput.value = defaultValue;
                 numberInput.value = defaultValue;
                 if (colorInput) {
                     colorInput.value = initialColors[index];
+                }
+                if (textInput) {
+                    textInput.value = initialLabels[index];
                 }
             });
 
@@ -403,68 +418,7 @@ function drawCustomLabels() {
             drawSectorBackgrounds();
             drawCustomLabels();
         }, 500);
-        // 允许多次修改 label 文字
-function makeLabelsEditable() {
-    // 获取所有 label 元素
-    const labels = document.querySelectorAll('.dimension-item label');
-    
-    // 遍历每个 label，添加点击事件
-    labels.forEach(label => {
-        label.addEventListener('click', function(e) {
-            e.stopPropagation(); // 防止事件冒泡到父元素
 
-            // 如果当前 label 已经是 input，则不处理
-            if (this.tagName === 'INPUT') return;
-
-            const index = this.dataset.index; // 获取 label 的索引
-            
-            // 创建输入框
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.value = this.textContent; // 设置输入框的初始值
-            input.style.width = `${this.offsetWidth}px`; // 宽度与 label 相同
-            input.style.height = `${this.offsetHeight}px`; // 高度与 label 相同
-            input.style.fontSize = this.style.fontSize || '14px'; // 字体大小
-            input.style.border = 'none'; // 去掉边框
-            input.style.padding = '0'; // 去掉内边距
-            input.style.margin = '0'; // 去掉外边距
-            input.style.outline = 'none'; // 去掉聚焦时的轮廓
-            input.style.boxSizing = 'border-box'; // 确保宽度计算正确
-
-            // 替换 label 为 input
-            this.replaceWith(input);
-            input.focus(); // 自动聚焦到输入框
-
-            // 输入框失去焦点时更新 label
-            input.addEventListener('blur', function() {
-                const newLabel = this.value.trim() || `维度${parseInt(index) + 1}`; // 如果为空，则使用默认值
-                const newLabelElement = document.createElement('label');
-                newLabelElement.textContent = newLabel;
-                newLabelElement.dataset.index = index; // 保留 data-index
-                this.replaceWith(newLabelElement); // 替换回 label
-
-                // 更新图表标签
-                chart.data.labels[index] = newLabel;
-                chart.update(); // 更新图表
-                drawSectorBackgrounds(); // 重新绘制扇形背景
-                drawCustomLabels(); // 重新绘制自定义标签
-
-                // 重新绑定点击事件（确保下次还能点击修改）
-                makeLabelsEditable();
-            });
-
-            // 按 Enter 键也可以确认修改
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    this.blur(); // 模拟失去焦点
-                }
-            });
-        });
-    });
-}
-
-// 初始绑定点击事件
-makeLabelsEditable();
     </script>
 </body>
 </html>
