@@ -403,6 +403,68 @@ function drawCustomLabels() {
             drawSectorBackgrounds();
             drawCustomLabels();
         }, 500);
+        // 允许多次修改 label 文字
+function makeLabelsEditable() {
+    // 获取所有 label 元素
+    const labels = document.querySelectorAll('.dimension-item label');
+    
+    // 遍历每个 label，添加点击事件
+    labels.forEach(label => {
+        label.addEventListener('click', function(e) {
+            e.stopPropagation(); // 防止事件冒泡到父元素
+
+            // 如果当前 label 已经是 input，则不处理
+            if (this.tagName === 'INPUT') return;
+
+            const index = this.dataset.index; // 获取 label 的索引
+            
+            // 创建输入框
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = this.textContent; // 设置输入框的初始值
+            input.style.width = `${this.offsetWidth}px`; // 宽度与 label 相同
+            input.style.height = `${this.offsetHeight}px`; // 高度与 label 相同
+            input.style.fontSize = this.style.fontSize || '14px'; // 字体大小
+            input.style.border = 'none'; // 去掉边框
+            input.style.padding = '0'; // 去掉内边距
+            input.style.margin = '0'; // 去掉外边距
+            input.style.outline = 'none'; // 去掉聚焦时的轮廓
+            input.style.boxSizing = 'border-box'; // 确保宽度计算正确
+
+            // 替换 label 为 input
+            this.replaceWith(input);
+            input.focus(); // 自动聚焦到输入框
+
+            // 输入框失去焦点时更新 label
+            input.addEventListener('blur', function() {
+                const newLabel = this.value.trim() || `维度${parseInt(index) + 1}`; // 如果为空，则使用默认值
+                const newLabelElement = document.createElement('label');
+                newLabelElement.textContent = newLabel;
+                newLabelElement.dataset.index = index; // 保留 data-index
+                this.replaceWith(newLabelElement); // 替换回 label
+
+                // 更新图表标签
+                chart.data.labels[index] = newLabel;
+                chart.update(); // 更新图表
+                drawSectorBackgrounds(); // 重新绘制扇形背景
+                drawCustomLabels(); // 重新绘制自定义标签
+
+                // 重新绑定点击事件（确保下次还能点击修改）
+                makeLabelsEditable();
+            });
+
+            // 按 Enter 键也可以确认修改
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    this.blur(); // 模拟失去焦点
+                }
+            });
+        });
+    });
+}
+
+// 初始绑定点击事件
+makeLabelsEditable();
     </script>
 </body>
 </html>
